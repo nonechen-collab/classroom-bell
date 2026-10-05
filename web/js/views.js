@@ -86,7 +86,7 @@ export function createEventView(root, actions) {
     root,
     `
     <div class="sim" data-k="sim" hidden>模擬測試（不列入紀錄）</div>
-    ${holdHtml('close', 'close', '✕ 按住關閉')}
+    <button class="hold close" data-k="close"><span class="label">✕ 關閉</span></button>
     <section class="stack" data-k="countdown" hidden>
       <h1 class="title" data-k="cdTitle"></h1>
       <p class="big num" data-k="cdNum"></p>
@@ -113,7 +113,7 @@ export function createEventView(root, actions) {
       <p class="small" data-k="luNote"></p>
     </section>`,
   );
-  holdButton($('close'), actions.close);
+  $('close').addEventListener('click', actions.close); // 關閉按一下就好；「全班就位」才需要按住
   holdButton($('doneBtn'), actions.done);
 
   const show = (name) => {

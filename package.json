@@ -1,0 +1,12 @@
+{
+  "name": "classroom-bell",
+  "version": "0.2.0",
+  "description": "教室作息提醒與就位計時系統（網頁版）",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node tools/serve.mjs",
+    "test": "node --test test/*.test.js",
+    "icons": "node tools/make-icons.mjs"
+  }
+}

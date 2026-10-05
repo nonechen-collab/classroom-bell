@@ -1,0 +1,363 @@
+:root {
+  --bg: #0b1a26;
+  --panel: #13293a;
+  --text: #f4f7fa;
+  --muted: #9fb3c4;
+  --accent: #ffd166;
+  --urgent: #ff5a5a;
+  --ok: #3ddc84;
+  --btn: #23455f;
+  --btn-fill: rgba(255, 255, 255, 0.28);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+p,
+h1 {
+  margin: 0;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  font-family: 'Segoe UI', 'Microsoft JhengHei UI', 'Roboto', sans-serif;
+}
+
+/* ---------- 畫面容器：字級跟著容器高度（cqh）縮放 ---------- */
+
+.view {
+  position: absolute;
+  inset: 0;
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4cqh 4cqw;
+  background: var(--bg);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5cqh;
+}
+
+.title {
+  font-size: 7cqh;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.big {
+  font-size: 42cqh;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.big.urgent {
+  color: var(--urgent);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.text {
+  font-size: 5.5cqh;
+  color: var(--accent);
+}
+
+.small {
+  font-size: 2.8cqh;
+  color: var(--muted);
+}
+
+.emoji {
+  font-size: 15cqh;
+  line-height: 1.1;
+}
+
+.timer {
+  font-size: 30cqh;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.timer .unit {
+  font-size: 8cqh;
+  margin-left: 1cqw;
+  color: var(--muted);
+}
+
+.timer.done {
+  color: var(--ok);
+}
+
+.result {
+  font-size: 8cqh;
+  font-weight: 800;
+  color: var(--ok);
+}
+
+.clock {
+  font-size: 30cqh;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.date {
+  font-size: 5cqh;
+  color: var(--muted);
+}
+
+.next {
+  font-size: 5.5cqh;
+  color: var(--accent);
+}
+
+.paused {
+  font-size: 4.5cqh;
+  padding: 0.6cqh 3cqw;
+  border-radius: 999px;
+  background: #e8912d;
+  color: #1c1205;
+  font-weight: 700;
+}
+
+.sim {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.6cqh 2cqw;
+  border-radius: 0 0 10px 10px;
+  background: #7a4cff;
+  font-weight: 700;
+  font-size: 2.6cqh;
+}
+
+/* ---------- 按住才觸發的按鈕 ---------- */
+
+.hold {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  background: var(--btn);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.hold .fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background: var(--btn-fill);
+  pointer-events: none;
+}
+
+.hold .label {
+  position: relative;
+  pointer-events: none;
+}
+
+.close {
+  position: absolute;
+  top: 2.5cqh;
+  right: 2cqw;
+  padding: 1.2cqh 2cqw;
+  font-size: 2.4cqh;
+  opacity: 0.8;
+}
+
+.done-btn {
+  margin-top: 1.5cqh;
+  padding: 2cqh 4cqw;
+  font-size: 3.6cqh;
+  font-weight: 700;
+}
+
+/* ---------- 小尺寸（浮動視窗、角落卡片） ---------- */
+
+.compact {
+  padding: 3cqh 4cqw;
+}
+
+.compact .stack {
+  gap: 1.5cqh;
+}
+
+.compact .emoji,
+.compact .small,
+.compact .date {
+  display: none;
+}
+
+.compact .title {
+  font-size: 12cqh;
+  letter-spacing: 0.02em;
+}
+
+.compact .big {
+  font-size: 52cqh;
+}
+
+.compact .text {
+  font-size: 9.5cqh;
+}
+
+.compact .timer {
+  font-size: 40cqh;
+}
+
+.compact .timer .unit {
+  font-size: 12cqh;
+}
+
+.compact .result {
+  font-size: 11cqh;
+}
+
+.compact .done-btn {
+  margin-top: 0;
+  padding: 2.5cqh 5cqw;
+  font-size: 8.5cqh;
+}
+
+.compact .close {
+  top: 3cqh;
+  right: 3cqw;
+  padding: 1.5cqh 3cqw;
+  font-size: 7cqh;
+}
+
+.compact .clock {
+  font-size: 40cqh;
+}
+
+.compact .next {
+  font-size: 10cqh;
+}
+
+.compact .paused {
+  font-size: 9cqh;
+}
+
+.compact .sim {
+  font-size: 7cqh;
+}
+
+/* ---------- 大螢幕頁面 ---------- */
+
+.card {
+  position: fixed;
+  top: 3vh;
+  right: 2vw;
+  width: 34vw;
+  height: 19vw;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  z-index: 5;
+}
+
+.toolbar {
+  position: fixed;
+  right: 1.5vw;
+  bottom: 2vh;
+  display: flex;
+  gap: 10px;
+  opacity: 0.45;
+  transition: opacity 0.2s;
+  z-index: 6;
+}
+
+.toolbar:hover,
+.toolbar:focus-within {
+  opacity: 1;
+}
+
+.toolbar button,
+.menu button {
+  min-height: 48px;
+  padding: 8px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.toolbar button.on {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
+.menu {
+  border: none;
+  border-radius: 14px;
+  padding: 20px;
+  background: var(--panel);
+  color: var(--text);
+  min-width: 320px;
+}
+
+.menu::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.menu h2 {
+  margin: 0 0 14px;
+  font-size: 20px;
+}
+
+.menu .list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hint-banner {
+  position: fixed;
+  left: 50%;
+  bottom: 9vh;
+  transform: translateX(-50%);
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: #1f6f9f;
+  color: #fff;
+  font-size: 20px;
+  z-index: 6;
+}
+
+/* 浮動視窗本身 */
+body.pip .view {
+  border: 0;
+}

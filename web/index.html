@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b1a26" />
+    <title>教室作息系統</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon-192.png" />
+    <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="settings.css" />
+  </head>
+  <body>
+    <div class="view" id="idle"></div>
+    <div class="view" id="event" hidden></div>
+    <div class="card" id="cardBox" hidden><div class="view compact" id="card"></div></div>
+
+    <nav class="toolbar" id="toolbar">
+      <button id="pipBtn">🗗 浮動視窗</button>
+      <button id="pauseBtn">⏸ 暫停</button>
+      <button id="settingsBtn">⚙ 設定</button>
+      <button id="fullBtn">⛶ 全螢幕</button>
+    </nav>
+    <div class="hint-banner" id="pipHint" hidden>點一下畫面任何地方，開啟浮動視窗</div>
+
+    <dialog class="menu" id="pauseMenu">
+      <h2 id="pauseTitle">暫停</h2>
+      <div class="list">
+        <button data-pause="skip">跳過下一個項目</button>
+        <button data-pause="hour">暫停 1 小時</button>
+        <button data-pause="today">暫停到今天結束</button>
+        <button data-pause="resume">恢復</button>
+        <button data-pause="cancel">取消</button>
+      </div>
+    </dialog>
+
+    <div class="settings" id="settings" hidden>
+      <header class="settings-head">
+        <nav class="tabs">
+          <button data-tab="schedule" class="active">作息時間表</button>
+          <button data-tab="days">放假與補課</button>
+          <button data-tab="general">一般設定</button>
+          <button data-tab="records">就位紀錄</button>
+          <button data-tab="help">使用說明</button>
+        </nav>
+        <button class="back" id="settingsClose">✕ 關閉設定</button>
+      </header>
+
+      <main>
+        <section data-panel="schedule">
+          <p class="hint">
+            每個項目會在鐘響前倒數，鐘響後依類型處理。按「模擬」可以馬上試跑一次（使用<strong>已儲存</strong>的設定，不列入紀錄）。
+          </p>
+          <table class="schedule">
+            <thead>
+              <tr>
+                <th>啟用</th>
+                <th>名稱</th>
+                <th>鐘響</th>
+                <th>結束</th>
+                <th>類型</th>
+                <th>午餐小視窗到</th>
+                <th>提醒文字</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+          <div class="row-actions">
+            <button id="addRow">＋ 新增項目</button>
+            <button id="resetSchedule">還原預設時間表</button>
+          </div>
+        </section>
+
+        <section data-panel="days" hidden>
+          <div class="two-col">
+            <label class="field">
+              <span>放假日（平日不上課，一行一個日期，例如 2026-10-09）</span>
+              <textarea id="holidays" rows="14" placeholder="2026-10-09&#10;2026-10-10"></textarea>
+            </label>
+            <label class="field">
+              <span>補上課日（週末要上課，一行一個日期）</span>
+              <textarea id="makeupDays" rows="14" placeholder="2026-09-26"></textarea>
+            </label>
+          </div>
+        </section>
+
+        <section data-panel="general" hidden>
+          <div class="grid">
+            <label class="field">
+              <span>時間微調（秒）</span>
+              <input id="offsetSec" type="number" step="1" />
+              <small>學校鐘聲比電腦時間晚 3 秒就填 3，早 3 秒就填 -3。也請開啟 Windows「自動設定時間」。</small>
+            </label>
+            <label class="field">
+              <span>鐘響前倒數（秒）</span>
+              <input id="countdownSec" type="number" min="5" max="120" />
+            </label>
+            <label class="field">
+              <span>鐘響後全螢幕顯示（秒）</span>
+              <input id="overlaySec" type="number" min="5" max="300" />
+            </label>
+            <label class="field">
+              <span>就位計時最長（分鐘）</span>
+              <input id="maxMiniMinutes" type="number" min="1" max="45" />
+              <small>超過這個時間還沒全班就位，就自動結束並記錄為「逾時」。</small>
+            </label>
+            <label class="field check">
+              <input id="pipOnTap" type="checkbox" />
+              <span>開啟網頁後，點一下畫面就開啟浮動視窗</span>
+              <small>瀏覽器規定浮動視窗要由人點一下才能開，所以每次開機要點一次。</small>
+            </label>
+          </div>
+        </section>
+
+        <section data-panel="records" hidden>
+          <div class="row-actions">
+            <button id="exportCsv">匯出 CSV</button>
+          </div>
+          <table class="records">
+            <thead>
+              <tr>
+                <th>日期</th>
+                <th>項目</th>
+                <th>結果</th>
+                <th>秒數</th>
+                <th>時間</th>
+              </tr>
+            </thead>
+            <tbody id="recordRows"></tbody>
+          </table>
+          <p class="hint" id="noRecords" hidden>還沒有紀錄。</p>
+        </section>
+
+        <section data-panel="help" class="help" hidden>
+          <h3>兩種用法</h3>
+          <ul>
+            <li><strong>大螢幕顯示這個網頁</strong>（下課時間）：平常是大時鐘，時間到會全螢幕倒數、計時。按右下角「⛶ 全螢幕」或鍵盤 F11。</li>
+            <li>
+              <strong>上課開電子書時</strong>：按「🗗 浮動視窗」，角落會出現永遠在最上層的小視窗，時間到就在小視窗裡倒數、計時。小視窗可以拖曳位置、拉角落改大小。
+            </li>
+          </ul>
+          <h3>關閉與暫停</h3>
+          <ul>
+            <li>畫面上「✕ 按住關閉」要按住約 1 秒，避免學生誤觸。在網頁或浮動視窗上也可以按 Esc。</li>
+            <li>「⏸ 暫停」可以跳過下一個項目、暫停 1 小時、暫停到今天結束（段考、活動日）。</li>
+          </ul>
+          <h3>開機自動開啟</h3>
+          <ol>
+            <li>用 Chrome 或 Edge 開啟這個網址，網址列右邊按「安裝」（或選單 →「投放、儲存與分享」→「將網頁安裝為應用程式」）。</li>
+            <li>到 <code>chrome://apps</code>（Edge 是 <code>edge://apps</code>），在「教室作息系統」上按右鍵，勾選「登入時啟動」。</li>
+            <li>每天開機後，在畫面上點一下就會開啟浮動視窗。</li>
+          </ol>
+          <h3>注意</h3>
+          <ul>
+            <li>大螢幕切到 Android 手寫白板時，看不到 Windows 畫面，所以也看不到倒數。</li>
+            <li>設定和紀錄存在這台電腦的瀏覽器裡。清除瀏覽器資料會一起清掉，之後會加上雲端同步。</li>
+            <li>第 1 階段還沒有鏡頭辨識：就位計時要由老師按住「全班就位」停止。</li>
+          </ul>
+        </section>
+      </main>
+
+      <footer id="settingsFooter">
+        <span id="status"></span>
+        <button id="save" class="primary">儲存設定</button>
+      </footer>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

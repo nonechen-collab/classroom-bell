@@ -462,3 +462,48 @@ table.schedule th:nth-child(8) {
   background: var(--s-panel);
   cursor: pointer;
 }
+
+/* 停用的按鈕要看得出來 */
+.settings button:disabled,
+.settings select:disabled,
+.settings input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.settings button.active {
+  background: #f0a020;
+  border-color: #f0a020;
+  color: #1c1205;
+  font-weight: 700;
+}
+
+.settings .seat-notice {
+  margin: 0 0 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #e7f1f9;
+  color: #1f4f70;
+  font-weight: 600;
+}
+
+.settings .seat-notice.layout {
+  background: #fff1d6;
+  color: #7a4a00;
+}
+
+.settings .seat-grid.layout-mode {
+  border: 3px solid #f0a020;
+  background: #fffaf0;
+}
+
+.settings .seat-grid.layout-mode .seat {
+  cursor: pointer;
+}
+
+.settings .seat-grid.layout-mode .seat.empty {
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--s-muted);
+}

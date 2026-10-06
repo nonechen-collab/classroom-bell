@@ -109,11 +109,11 @@
           <div class="seat-layout-bar" id="seatLayoutBar" hidden>
             <label>排數 <input id="seatRows" type="number" min="1" max="12" /></label>
             <label>欄數 <input id="seatCols" type="number" min="1" max="12" /></label>
-            <span class="hint">點格子可以設成「沒有座位」（走道、櫃子），再點一次恢復。</span>
           </div>
 
           <div class="seat-main">
             <div class="seat-board">
+              <p class="seat-notice" id="seatNotice" hidden></p>
               <div class="seat-grid" id="seatGrid"></div>
               <p class="seat-summary" id="seatSummary"></p>
             </div>

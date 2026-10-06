@@ -59,10 +59,11 @@ export function setupSeatEditor({ store }) {
     render();
   }
 
+  const currentAssign = () => editing()?.assign || {};
+
   function setAssign(assign) {
-    const v = editing();
-    if (!v) return;
-    commit({ ...seating, versions: seating.versions.map((x) => (x.id === v.id ? { ...x, assign } : x)) });
+    const next = ensureVersion(seating); // 有名單但還沒有任何版本時，先建立第一版
+    commit({ ...next, versions: next.versions.map((x) => (x.id === editingId ? { ...x, assign } : x)) });
   }
 
   /** 沒有任何版本時，自動建立第一版 */
@@ -83,7 +84,8 @@ export function setupSeatEditor({ store }) {
     renderRoster();
     $('#seatUndo').disabled = undoStack.length === 0;
     $('#seatViewToggle').textContent = seating.view === 'teacher' ? '目前：講台在上（老師視角）' : '目前：講台在下（學生視角）';
-    $('#seatLayoutToggle').textContent = layoutMode ? '✓ 完成版面' : '編輯版面';
+    $('#seatLayoutToggle').textContent = layoutMode ? '✓ 完成版面' : '🛠 編輯版面';
+    $('#seatLayoutToggle').classList.toggle('active', layoutMode);
     $('#seatLayoutBar').hidden = !layoutMode;
     $('#seatRows').value = seating.rows;
     $('#seatCols').value = seating.cols;
@@ -104,7 +106,11 @@ export function setupSeatEditor({ store }) {
     for (const id of ['#seatVersion', '#seatVersionName', '#seatVersionFrom', '#seatUseToday', '#seatDeleteVersion']) $(id).disabled = !v;
     $('#seatVersionName').value = v ? v.name : '';
     $('#seatVersionFrom').value = v ? v.from : '';
-    for (const b of document.querySelectorAll('[data-shift], #seatShuffle, #seatMirror, #seatClear')) b.disabled = !v || layoutMode;
+    const noStudents = seating.students.length === 0;
+    for (const b of document.querySelectorAll('[data-shift], #seatShuffle, #seatMirror, #seatClear')) {
+      b.disabled = noStudents || layoutMode;
+      b.title = noStudents ? '請先新增學生或匯入 CSV' : layoutMode ? '請先按「✓ 完成版面」' : '';
+    }
   }
 
   /** 依視角排出格子順序：學生視角講台在下、老師視角講台在上且左右相反 */
@@ -126,6 +132,15 @@ export function setupSeatEditor({ store }) {
     const blocked = new Set(seating.blocked);
     const grid = $('#seatGrid');
     grid.style.setProperty('--cols', seating.cols);
+    grid.classList.toggle('layout-mode', layoutMode);
+    const notice = layoutMode
+      ? '🛠 版面編輯中：點格子可以設成「沒有座位」（走道、櫃子），再點一次恢復。改好後按「✓ 完成版面」。'
+      : seating.students.length === 0
+        ? '還沒有學生名單：請在右邊新增學生，或按「匯入 CSV」。'
+        : '';
+    $('#seatNotice').textContent = notice;
+    $('#seatNotice').hidden = !notice;
+    $('#seatNotice').classList.toggle('layout', layoutMode);
     const podium = el('div', { className: 'podium', textContent: '講　台' });
     const cells = [];
     for (const row of orderedCells()) {
@@ -142,6 +157,7 @@ export function setupSeatEditor({ store }) {
           cell.append(tag);
         } else {
           cell.classList.add('empty');
+          if (layoutMode) cell.textContent = '有座位';
         }
         if (selected && selected.type === 'seat' && selected.key === key) cell.classList.add('selected');
         cells.push(cell);
@@ -282,17 +298,18 @@ export function setupSeatEditor({ store }) {
   // ---------- 工具列 ----------
 
   $('#seatShuffle').addEventListener('click', () => {
-    if (Object.keys(editing().assign).length && !confirm('隨機重排這一版的所有座位？（可以按「復原」）')) return;
+    const v = editing();
+    if (v && Object.keys(v.assign).length && !confirm('隨機重排這一版的所有座位？（可以按「復原」）')) return;
     setAssign(shuffleAll(seating));
   });
   for (const b of document.querySelectorAll('[data-shift]')) {
     b.addEventListener('click', () => {
       const [axis, dir] = b.dataset.shift.split(',');
       const fn = axis === 'row' ? shiftRows : shiftCols;
-      setAssign(fn(seating, editing().assign, Number(dir)));
+      setAssign(fn(seating, currentAssign(), Number(dir)));
     });
   }
-  $('#seatMirror').addEventListener('click', () => setAssign(mirror(seating, editing().assign)));
+  $('#seatMirror').addEventListener('click', () => setAssign(mirror(seating, currentAssign())));
   $('#seatClear').addEventListener('click', () => {
     if (!confirm('清空這一版的所有座位？（可以按「復原」）')) return;
     setAssign({});

@@ -1,7 +1,7 @@
 // 離線快取：學校網路斷線時，網頁照樣能開、能倒數。
 // 每次更新程式要把 VERSION 加 1，瀏覽器才會換成新版。
 
-const VERSION = 'v2';
+const VERSION = 'v3';
 const FILES = [
   './',
   'index.html',

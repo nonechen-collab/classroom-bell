@@ -1,7 +1,7 @@
 // 畫面元件：同一套元件用在大螢幕全螢幕、角落小卡片、浮動視窗（子母畫面）。
 // 字級都用容器單位（cqh），所以放在多大的框裡就自動縮放。
 
-const HOLD_MS = 1200; // 觸控螢幕：要「按住」才算數，避免學生誤觸
+const HOLD_MS = 100; // 「全班就位」按住 0.1 秒就算數，幾乎等於點一下
 const WEEKDAYS = '日一二三四五六';
 
 export const pad = (n) => String(n).padStart(2, '0');
@@ -29,7 +29,7 @@ function countdownTitle(name) {
   return /節$/.test(name) ? `${name} 即將上課` : `${name} 即將開始`;
 }
 
-/** 讓按鈕變成「按住 1.2 秒才觸發」，按的時候會有進度條 */
+/** 讓按鈕變成「按住 HOLD_MS 才觸發」，按的時候會有進度條 */
 export function holdButton(el, onDone) {
   const win = el.ownerDocument.defaultView;
   const fill = el.querySelector('.fill');
@@ -103,7 +103,7 @@ export function createEventView(root, actions) {
       <p class="timer num" data-k="stTimer"><span data-k="stValue"></span><span class="unit">秒</span></p>
       <p class="text" data-k="stText"></p>
       <p class="result" data-k="stResult" hidden></p>
-      ${holdHtml('done-btn', 'doneBtn', '✓ 全班就位（老師按住）')}
+      ${holdHtml('done-btn', 'doneBtn', '✓ 全班就位')}
     </section>
     <section class="stack" data-k="lunch" hidden>
       <div class="emoji">🍱</div>

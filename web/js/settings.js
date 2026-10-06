@@ -1,6 +1,7 @@
 // 設定頁：作息時間表、放假與補課、一般設定、就位紀錄
 
 import { TYPES, DEFAULT_SCHEDULE } from './schedule.js';
+import { setupSeatEditor } from './seat-editor.js';
 
 const RESULT_LABEL = {
   done: '全班就位',
@@ -26,6 +27,7 @@ function pad(n) {
  */
 export function setupSettings({ store, engine, onClose }) {
   const panel = $('#settings');
+  const seatEditor = setupSeatEditor({ store });
   let data; // 編輯中的設定
   let savedIds = new Set(); // 已儲存的項目才能模擬
   let dirty = false;
@@ -36,7 +38,7 @@ export function setupSettings({ store, engine, onClose }) {
     btn.addEventListener('click', () => {
       for (const b of panel.querySelectorAll('.tabs button')) b.classList.toggle('active', b === btn);
       for (const p of panel.querySelectorAll('[data-panel]')) p.hidden = p.dataset.panel !== btn.dataset.tab;
-      $('#settingsFooter').hidden = btn.dataset.tab === 'records' || btn.dataset.tab === 'help';
+      $('#settingsFooter').hidden = ['seats', 'records', 'help'].includes(btn.dataset.tab); // 座位表改了就自動存
       if (btn.dataset.tab === 'records') renderRecords();
     });
   }
@@ -222,6 +224,7 @@ export function setupSettings({ store, engine, onClose }) {
 
   function open() {
     load();
+    seatEditor.refresh();
     panel.hidden = false;
   }
 

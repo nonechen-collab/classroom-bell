@@ -38,6 +38,7 @@
       <header class="settings-head">
         <nav class="tabs">
           <button data-tab="schedule" class="active">作息時間表</button>
+          <button data-tab="seats">座位表</button>
           <button data-tab="days">放假與補課</button>
           <button data-tab="general">一般設定</button>
           <button data-tab="records">就位紀錄</button>
@@ -69,6 +70,75 @@
           <div class="row-actions">
             <button id="addRow">＋ 新增項目</button>
             <button id="resetSchedule">還原預設時間表</button>
+          </div>
+        </section>
+
+        <section data-panel="seats" class="seats" hidden>
+          <div class="seat-bar">
+            <label>
+              版本
+              <select id="seatVersion"></select>
+            </label>
+            <label>
+              名稱
+              <input id="seatVersionName" type="text" />
+            </label>
+            <label>
+              生效日期
+              <input id="seatVersionFrom" type="date" />
+            </label>
+            <button id="seatUseToday">今天起使用</button>
+            <button id="seatNewVersion">＋ 新增版本</button>
+            <button id="seatDeleteVersion" class="danger">刪除這版</button>
+          </div>
+
+          <div class="seat-bar">
+            <button id="seatShuffle">🎲 隨機排座位</button>
+            <button data-shift="row,-1">⬆ 整排往前</button>
+            <button data-shift="row,1">⬇ 整排往後</button>
+            <button data-shift="col,-1">⬅ 整欄往左</button>
+            <button data-shift="col,1">➡ 整欄往右</button>
+            <button id="seatMirror">⇆ 左右對調</button>
+            <button id="seatClear" class="danger">清空座位</button>
+            <button id="seatUndo">↶ 復原</button>
+            <span class="spacer"></span>
+            <button id="seatViewToggle"></button>
+            <button id="seatLayoutToggle">編輯版面</button>
+          </div>
+
+          <div class="seat-layout-bar" id="seatLayoutBar" hidden>
+            <label>排數 <input id="seatRows" type="number" min="1" max="12" /></label>
+            <label>欄數 <input id="seatCols" type="number" min="1" max="12" /></label>
+            <span class="hint">點格子可以設成「沒有座位」（走道、櫃子），再點一次恢復。</span>
+          </div>
+
+          <div class="seat-main">
+            <div class="seat-board">
+              <div class="seat-grid" id="seatGrid"></div>
+              <p class="seat-summary" id="seatSummary"></p>
+            </div>
+
+            <aside class="seat-side">
+              <h3>未安排座位</h3>
+              <div class="pool" id="seatPool"></div>
+              <p class="hint">拖曳名牌到座位；拖到有人的座位會互換，拖回這裡就取消座位。也可以先點一個名牌、再點目的地。</p>
+
+              <h3>學生名單</h3>
+              <div class="roster-add">
+                <input id="rosterNo" type="text" inputmode="numeric" placeholder="座號" />
+                <input id="rosterName" type="text" placeholder="姓名" />
+                <button id="rosterAdd">新增</button>
+              </div>
+              <div class="roster-list" id="rosterList"></div>
+              <div class="row-actions">
+                <label class="file-btn">
+                  匯入 CSV
+                  <input id="rosterImport" type="file" accept=".csv,text/csv,text/plain" hidden />
+                </label>
+                <button id="rosterExport">匯出 CSV</button>
+              </div>
+              <p class="hint">CSV 格式：座號,姓名,排,欄（排：1 = 最靠近講台；欄：1 = 學生面向講台的最左邊）。排、欄可以不填。</p>
+            </aside>
           </div>
         </section>
 

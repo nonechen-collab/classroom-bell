@@ -1,6 +1,7 @@
 // 設定與紀錄：存在這台電腦的瀏覽器裡（localStorage）。之後接上 Firebase 再同步到雲端。
 
 import { DEFAULT_SCHEDULE, DATE_RE, validateSchedule } from './schedule.js';
+import { DEFAULT_SEATING } from './seating.js';
 
 export const DEFAULTS = {
   version: 1,
@@ -17,6 +18,7 @@ export const DEFAULTS = {
 
 const KEY = 'classroom-bell.settings';
 const RECORD_KEY = 'classroom-bell.records';
+const SEATING_KEY = 'classroom-bell.seating';
 const MAX_RECORDS = 5000;
 
 function readJson(key, fallback) {
@@ -94,6 +96,16 @@ export class Store {
     }
     writeJson(KEY, this.data);
     return null;
+  }
+
+  // ---------- 座位表（含學生姓名，只存在這台電腦） ----------
+
+  seating() {
+    return { ...structuredClone(DEFAULT_SEATING), ...readJson(SEATING_KEY, {}) };
+  }
+
+  saveSeating(seating) {
+    writeJson(SEATING_KEY, seating);
   }
 
   addRecord(record) {
